@@ -34,7 +34,7 @@ cbor_item_t *cbor_new_definite_bytestring() {
   *item = (cbor_item_t){
       .refcount = 1,
       .type = CBOR_TYPE_BYTESTRING,
-      .metadata = {.bytestring_metadata = {_CBOR_METADATA_DEFINITE, 0}}};
+      .metadata = {.bytestring_metadata = {_CBOR_METADATA_DEFINITE, (_cbor_dst_metadata) 0}}};
   return item;
 }
 

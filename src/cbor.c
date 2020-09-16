@@ -11,6 +11,9 @@
 
 cbor_item_t *cbor_load(cbor_data source, size_t source_size,
                        struct cbor_load_result *result) {
+
+cbor_item_t *result_item;
+
   /* Context stack */
   static struct cbor_callbacks callbacks = {
       .uint8 = &cbor_builder_uint8_callback,
@@ -101,7 +104,7 @@ cbor_item_t *cbor_load(cbor_data source, size_t source_size,
   } while (stack.size > 0);
 
   /* Move the result before free */
-  cbor_item_t *result_item = context.root;
+  result_item = context.root;
   return result_item;
 
 error:

@@ -28,12 +28,9 @@ bool cbor_array_set(cbor_item_t *item, size_t index, cbor_item_t *value) {
     return cbor_array_push(item, value);
   } else if (index < item->metadata.array_metadata.end_ptr) {
     return cbor_array_replace(item, index, value);
-  } else {
-    return false;
   }
-  // TODO: This is unreachable and the index checking logic above seems
-  // suspicious -- out of bounds index is a caller error. Figure out & fix.
-  return true;
+
+  return false;
 }
 
 bool cbor_array_replace(cbor_item_t *item, size_t index, cbor_item_t *value) {

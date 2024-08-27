@@ -15,7 +15,7 @@
 #define UNUSED(x) x
 #endif
 
-void usage(void) {
+static void usage(void) {
   printf("Usage: streaming_parser [input file]\n");
   exit(1);
 }
@@ -27,10 +27,10 @@ void usage(void) {
  * Use the examples/data/map.cbor input to test this.
  */
 
-const char* key = "a secret key";
-bool key_found = false;
+static const char* key = "a secret key";
+static bool key_found = false;
 
-void find_string(void* UNUSED(_ctx), cbor_data buffer, uint64_t len) {
+static void find_string(void* UNUSED(_ctx), cbor_data buffer, uint64_t len) {
   if (key_found) {
     printf("Found the value: %.*s\n", (int)len, buffer);
     key_found = false;
@@ -39,7 +39,11 @@ void find_string(void* UNUSED(_ctx), cbor_data buffer, uint64_t len) {
   }
 }
 
-int main(int argc, char* argv[]) {
+#if defined(BUILD_MONOLITHIC)
+#define main cbor_streaming_parser_example_main
+#endif
+
+int main(int argc, const char** argv) {
   if (argc != 2) usage();
   FILE* f = fopen(argv[1], "rb");
   if (f == NULL) usage();
@@ -61,4 +65,5 @@ int main(int argc, char* argv[]) {
 
   free(buffer);
   fclose(f);
+  return 0;
 }

@@ -21,6 +21,10 @@ size_t cbor_serialize(const cbor_item_t *item, unsigned char *buffer,
                       size_t buffer_size) {
   // cppcheck-suppress missingReturn
   switch (cbor_typeof(item)) {
+    // fix warning C4715 : 'cbor_get_int' not all control paths return a value
+    default:
+      return 0;
+
     case CBOR_TYPE_UINT:
       return cbor_serialize_uint(item, buffer, buffer_size);
     case CBOR_TYPE_NEGINT:
@@ -61,7 +65,7 @@ size_t _cbor_encoded_header_size(uint64_t size) {
 size_t cbor_serialized_size(const cbor_item_t *item) {
   // cppcheck-suppress missingReturn
   switch (cbor_typeof(item)) {
-    case CBOR_TYPE_UINT:
+	case CBOR_TYPE_UINT:
     case CBOR_TYPE_NEGINT:
       switch (cbor_int_get_width(item)) {
         case CBOR_INT_8:
@@ -149,6 +153,8 @@ size_t cbor_serialized_size(const cbor_item_t *item) {
           return 9;
       }
   }
+  // fix warning C4715 : 'cbor_get_int' not all control paths return a value
+  return 0;
 }
 
 size_t cbor_serialize_alloc(const cbor_item_t *item, unsigned char **buffer,
@@ -176,6 +182,10 @@ size_t cbor_serialize_uint(const cbor_item_t *item, unsigned char *buffer,
   CBOR_ASSERT(cbor_isa_uint(item));
   // cppcheck-suppress missingReturn
   switch (cbor_int_get_width(item)) {
+    // fix warning C4715 : 'cbor_get_int' not all control paths return a value
+    default:
+      return 0;
+
     case CBOR_INT_8:
       return cbor_encode_uint8(cbor_get_uint8(item), buffer, buffer_size);
     case CBOR_INT_16:
@@ -192,6 +202,10 @@ size_t cbor_serialize_negint(const cbor_item_t *item, unsigned char *buffer,
   CBOR_ASSERT(cbor_isa_negint(item));
   // cppcheck-suppress missingReturn
   switch (cbor_int_get_width(item)) {
+    // fix warning C4715 : 'cbor_get_int' not all control paths return a value
+    default:
+      return 0;
+
     case CBOR_INT_8:
       return cbor_encode_negint8(cbor_get_uint8(item), buffer, buffer_size);
     case CBOR_INT_16:
@@ -353,6 +367,10 @@ size_t cbor_serialize_float_ctrl(const cbor_item_t *item, unsigned char *buffer,
   CBOR_ASSERT(cbor_isa_float_ctrl(item));
   // cppcheck-suppress missingReturn
   switch (cbor_float_get_width(item)) {
+    // fix warning C4715 : 'cbor_get_int' not all control paths return a value
+    default:
+      return 0;
+
     case CBOR_FLOAT_0:
       /* CTRL - special treatment */
       return cbor_encode_ctrl(cbor_ctrl_value(item), buffer, buffer_size);

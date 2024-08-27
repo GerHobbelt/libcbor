@@ -8,7 +8,7 @@
 #include "assertions.h"
 #include "cbor.h"
 
-unsigned char buffer[512];
+static unsigned char buffer[512];
 
 static void test_embedded_uint8(void **_CBOR_UNUSED(_state)) {
   assert_size_equal(1, cbor_encode_uint8(14, buffer, 512));
@@ -58,6 +58,10 @@ static void test_unspecified(void **_CBOR_UNUSED(_state)) {
   assert_size_equal(2, cbor_encode_uint(255, buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0x18, 0xFF}), 2);
 }
+
+#if defined(BUILD_MONOLITHIC)
+#define main cbor_uint_encoders_test_main
+#endif
 
 int main(void) {
   const struct CMUnitTest tests[] = {cmocka_unit_test(test_embedded_uint8),

@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include "cbor.h"
 
-void usage(void) {
+static void usage(void) {
   printf("Usage: readfile [input file]\n");
   exit(1);
 }
@@ -18,7 +18,11 @@ void usage(void) {
  * $ ./examples/readfile examples/data/nested_array.cbor
  */
 
-int main(int argc, char* argv[]) {
+#if defined(BUILD_MONOLITHIC)
+#define main cbor_readfile_example_main
+#endif
+
+int main(int argc, const char** argv) {
   if (argc != 2) usage();
   FILE* f = fopen(argv[1], "rb");
   if (f == NULL) usage();
@@ -66,7 +70,7 @@ int main(int argc, char* argv[]) {
         break;
       }
     }
-    exit(1);
+    return 1;
   }
 
   /* Pretty-print the result */
@@ -76,4 +80,5 @@ int main(int argc, char* argv[]) {
   cbor_decref(&item);
 
   fclose(f);
+  return 0;
 }

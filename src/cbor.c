@@ -140,6 +140,10 @@ static cbor_item_t *_cbor_copy_int(cbor_item_t *item, bool negative) {
 static cbor_item_t *_cbor_copy_float_ctrl(cbor_item_t *item) {
   // cppcheck-suppress missingReturn
   switch (cbor_float_get_width(item)) {
+    // fix warning C4715 : 'cbor_get_int' not all control paths return a value
+    default:
+      return NULL;
+
     case CBOR_FLOAT_0:
       return cbor_build_ctrl(cbor_ctrl_value(item));
     case CBOR_FLOAT_16:
@@ -154,6 +158,10 @@ static cbor_item_t *_cbor_copy_float_ctrl(cbor_item_t *item) {
 cbor_item_t *cbor_copy(cbor_item_t *item) {
   // cppcheck-suppress missingReturn
   switch (cbor_typeof(item)) {
+    // fix warning C4715 : 'cbor_get_int' not all control paths return a value
+    default:
+      return NULL;
+
     case CBOR_TYPE_UINT:
       return _cbor_copy_int(item, false);
     case CBOR_TYPE_NEGINT:

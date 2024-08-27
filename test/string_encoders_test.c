@@ -8,7 +8,7 @@
 #include "assertions.h"
 #include "cbor.h"
 
-unsigned char buffer[512];
+static unsigned char buffer[512];
 
 static void test_embedded_string_start(void **_CBOR_UNUSED(_state)) {
   assert_size_equal(1, cbor_encode_string_start(1, buffer, 512));
@@ -26,6 +26,10 @@ static void test_indef_string_start(void **_CBOR_UNUSED(_state)) {
   assert_size_equal(0, cbor_encode_indef_string_start(buffer, 0));
   assert_memory_equal(buffer, ((unsigned char[]){0x7F}), 1);
 }
+
+#if defined(BUILD_MONOLITHIC)
+#define main cbor_string_encoders_test_main
+#endif
 
 int main(void) {
   const struct CMUnitTest tests[] = {

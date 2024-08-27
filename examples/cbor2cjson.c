@@ -11,12 +11,12 @@
 
 #include "cbor.h"
 
-void usage(void) {
+static void usage(void) {
   printf("Usage: cbor2cjson [input file]\n");
   exit(1);
 }
 
-cJSON* cbor_to_cjson(cbor_item_t* item) {
+static cJSON* cbor_to_cjson(cbor_item_t* item) {
   switch (cbor_typeof(item)) {
     case CBOR_TYPE_UINT:
       return cJSON_CreateNumber(cbor_get_int(item));
@@ -86,7 +86,11 @@ cJSON* cbor_to_cjson(cbor_item_t* item) {
  * $ ./examples/cbor2cjson examples/data/nested_array.cbor
  */
 
-int main(int argc, char* argv[]) {
+#if defined(BUILD_MONOLITHIC)
+#define main cbor2cjson_example_main
+#endif
+
+int main(int argc, const char** argv) {
   if (argc != 2) usage();
   FILE* f = fopen(argv[1], "rb");
   if (f == NULL) usage();
@@ -120,4 +124,5 @@ int main(int argc, char* argv[]) {
   cJSON_Delete(cjson_item);
 
   fclose(f);
+  return 0;
 }

@@ -9,7 +9,7 @@
 
 #include "cbor.h"
 
-unsigned char buffer[512];
+static unsigned char buffer[512];
 
 static void test_embedded_bytestring_start(void **_CBOR_UNUSED(_state)) {
   assert_size_equal(1, cbor_encode_bytestring_start(1, buffer, 512));
@@ -27,6 +27,10 @@ static void test_indef_bytestring_start(void **_CBOR_UNUSED(_state)) {
   assert_size_equal(1, cbor_encode_indef_bytestring_start(buffer, 512));
   assert_memory_equal(buffer, ((unsigned char[]){0x5F}), 1);
 }
+
+#if defined(BUILD_MONOLITHIC)
+#define main cbor_bytestring_encoders_test_main
+#endif
 
 int main(void) {
   const struct CMUnitTest tests[] = {

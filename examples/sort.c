@@ -14,7 +14,7 @@
  * standard library functions.
  */
 
-int compareUint(const void *a, const void *b) {
+static int compareUint(const void *a, const void *b) {
   uint8_t av = cbor_get_uint8(*(cbor_item_t **)a),
           bv = cbor_get_uint8(*(cbor_item_t **)b);
 
@@ -25,6 +25,10 @@ int compareUint(const void *a, const void *b) {
   else
     return 1;
 }
+
+#if defined(BUILD_MONOLITHIC)
+#define main cbor_sort_example_main
+#endif
 
 int main(void) {
   cbor_item_t *array = cbor_new_definite_array(4);
@@ -39,4 +43,5 @@ int main(void) {
 
   cbor_describe(array, stdout);
   fflush(stdout);
+  return 0;
 }

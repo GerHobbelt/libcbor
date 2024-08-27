@@ -8,7 +8,7 @@
 #include "assertions.h"
 #include "cbor.h"
 
-unsigned char buffer[512];
+static unsigned char buffer[512];
 
 static void test_embedded_tag(void **_CBOR_UNUSED(_state)) {
   assert_size_equal(1, cbor_encode_tag(1, buffer, 512));
@@ -20,6 +20,10 @@ static void test_tag(void **_CBOR_UNUSED(_state)) {
   assert_memory_equal(buffer, ((unsigned char[]){0xDA, 0x00, 0x0F, 0x42, 0x40}),
                       5);
 }
+
+#if defined(BUILD_MONOLITHIC)
+#define main cbor_tag_encoders_test_main
+#endif
 
 int main(void) {
   const struct CMUnitTest tests[] = {

@@ -25,7 +25,7 @@
 typedef void (*cbor_load_callback_t)(cJSON *, const struct cbor_callbacks *,
                                      void *);
 
-cbor_item_t *cjson_cbor_load(void *source,
+static cbor_item_t *cjson_cbor_load(void *source,
                              cbor_load_callback_t cbor_load_callback) {
   static struct cbor_callbacks callbacks = {
       .uint64 = &cbor_builder_uint64_callback,
@@ -51,7 +51,7 @@ cbor_item_t *cjson_cbor_load(void *source,
   return context.root;
 }
 
-void cjson_cbor_stream_decode(cJSON *source,
+static void cjson_cbor_stream_decode(cJSON *source,
                               const struct cbor_callbacks *callbacks,
                               void *context) {
   switch (source->type) {
@@ -110,12 +110,16 @@ void cjson_cbor_stream_decode(cJSON *source,
   }
 }
 
-void usage(void) {
+static void usage(void) {
   printf("Usage: cjson2cbor [input JSON file]\n");
   exit(1);
 }
 
-int main(int argc, char *argv[]) {
+#if defined(BUILD_MONOLITHIC)
+#define main cjson2cbor_example_main
+#endif
+
+int main(int argc, const char **argv) {
   if (argc != 2) usage();
   FILE *f = fopen(argv[1], "rb");
   if (f == NULL) usage();
@@ -142,4 +146,5 @@ int main(int argc, char *argv[]) {
   fflush(stdout);
   cJSON_Delete(json);
   cbor_decref(&cbor);
+  return 0;
 }

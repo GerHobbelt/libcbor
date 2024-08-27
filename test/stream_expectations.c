@@ -1,8 +1,8 @@
 #include "stream_expectations.h"
 
-struct test_assertion assertions_queue[MAX_QUEUE_ITEMS];
-int queue_size = 0;
-int current_expectation = 0;
+static struct test_assertion assertions_queue[MAX_QUEUE_ITEMS];
+static int queue_size = 0;
+static int current_expectation = 0;
 
 int clean_up_stream_assertions(void **state) {
   if (queue_size != current_expectation) {

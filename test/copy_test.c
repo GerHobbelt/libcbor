@@ -9,7 +9,7 @@
 #include "cbor.h"
 #include "test_allocator.h"
 
-cbor_item_t *item, *copy, *tmp;
+static cbor_item_t *item = NULL, *copy = NULL, *tmp = NULL;
 
 static void test_uints(void **_CBOR_UNUSED(_state)) {
   item = cbor_build_uint8(10);
@@ -434,6 +434,10 @@ static void test_tag_alloc_failure(void **_CBOR_UNUSED(_state)) {
 
   cbor_decref(&item);
 }
+
+#if defined(BUILD_MONOLITHIC)
+#define main cbor_copy_test_main
+#endif
 
 int main(void) {
   const struct CMUnitTest tests[] = {

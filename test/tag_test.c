@@ -9,10 +9,10 @@
 #include "cbor.h"
 #include "test_allocator.h"
 
-cbor_item_t *tag;
-struct cbor_load_result res;
+static cbor_item_t *tag = NULL;
+static struct cbor_load_result res;
 
-unsigned char embedded_tag_data[] = {0xC0, 0x00};
+static unsigned char embedded_tag_data[] = {0xC0, 0x00};
 
 static void test_refcounting(void **_CBOR_UNUSED(_state)) {
   tag = cbor_load(embedded_tag_data, 2, &res);
@@ -36,7 +36,7 @@ static void test_embedded_tag(void **_CBOR_UNUSED(_state)) {
   assert_null(tag);
 }
 
-unsigned char int8_tag_data[] = {0xD8, 0xFF, 0x01};
+static unsigned char int8_tag_data[] = {0xD8, 0xFF, 0x01};
 
 /* Tag 255 + uint 1 */
 static void test_int8_tag(void **_CBOR_UNUSED(_state)) {
@@ -48,7 +48,7 @@ static void test_int8_tag(void **_CBOR_UNUSED(_state)) {
   assert_null(tag);
 }
 
-unsigned char int16_tag_data[] = {0xD9, 0xFF, 0x00, 0x02};
+static unsigned char int16_tag_data[] = {0xD9, 0xFF, 0x00, 0x02};
 
 /* Tag 255 << 8 + uint 2 */
 static void test_int16_tag(void **_CBOR_UNUSED(_state)) {
@@ -60,7 +60,7 @@ static void test_int16_tag(void **_CBOR_UNUSED(_state)) {
   assert_null(tag);
 }
 
-unsigned char int32_tag_data[] = {0xDA, 0xFF, 0x00, 0x00, 0x00, 0x03};
+static unsigned char int32_tag_data[] = {0xDA, 0xFF, 0x00, 0x00, 0x00, 0x03};
 
 /* uint 3 */
 static void test_int32_tag(void **_CBOR_UNUSED(_state)) {
@@ -72,7 +72,7 @@ static void test_int32_tag(void **_CBOR_UNUSED(_state)) {
   assert_null(tag);
 }
 
-unsigned char int64_tag_data[] = {0xDB, 0xFF, 0x00, 0x00, 0x00,
+static unsigned char int64_tag_data[] = {0xDB, 0xFF, 0x00, 0x00, 0x00,
                                   0x00, 0x00, 0x00, 0x00, 0x04};
 
 /* uint 4 */
@@ -85,7 +85,7 @@ static void test_int64_tag(void **_CBOR_UNUSED(_state)) {
   assert_null(tag);
 }
 
-unsigned char nested_tag_data[] = {0xC0, 0xC1, 0x18, 0x2A};
+static unsigned char nested_tag_data[] = {0xC0, 0xC1, 0x18, 0x2A};
 
 /* Tag 0, tag 1 + uint 0 */
 static void test_nested_tag(void **_CBOR_UNUSED(_state)) {
@@ -146,6 +146,10 @@ static void test_build_tag_failure(void **_CBOR_UNUSED(_state)) {
 static void test_tag_creation(void **_CBOR_UNUSED(_state)) {
   WITH_FAILING_MALLOC({ assert_null(cbor_new_tag(42)); });
 }
+
+#if defined(BUILD_MONOLITHIC)
+#define main cbor_tag_test_main
+#endif
 
 int main(void) {
   const struct CMUnitTest tests[] = {

@@ -48,6 +48,10 @@ static void test_realloc_multiple(void **_CBOR_UNUSED(_state)) {
   assert_null(_cbor_realloc_multiple(NULL, SIZE_MAX, 2));
 }
 
+#if defined(BUILD_MONOLITHIC)
+#define main cbor_memory_utils_test_main
+#endif
+
 int main(void) {
   const struct CMUnitTest tests[] = {
       cmocka_unit_test(test_safe_multiply),

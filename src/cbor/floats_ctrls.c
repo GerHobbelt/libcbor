@@ -47,6 +47,9 @@ double cbor_float_get_float(const cbor_item_t *item) {
   CBOR_ASSERT(cbor_is_float(item));
   // cppcheck-suppress missingReturn
   switch (cbor_float_get_width(item)) {
+		// fix warning C4715 : 'cbor_float_get_float' not all control paths return a value
+    default:
+			//fallthrough
     case CBOR_FLOAT_0:
       return NAN;
     case CBOR_FLOAT_16:

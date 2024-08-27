@@ -40,6 +40,9 @@ uint64_t cbor_get_int(const cbor_item_t *item) {
   CBOR_ASSERT(cbor_is_int(item));
   // cppcheck-suppress missingReturn
   switch (cbor_int_get_width(item)) {
+    // fix warning C4715 : 'cbor_get_int' not all control paths return a value
+    default:
+      // fallthrough
     case CBOR_INT_8:
       return cbor_get_uint8(item);
     case CBOR_INT_16:

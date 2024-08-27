@@ -10,7 +10,7 @@
 #include "cbor/internal/stack.h"
 #include "test_allocator.h"
 
-unsigned char data[] = {
+static unsigned char data[] = {
     0x93, 0x01, 0x19, 0x01, 0x01, 0x1A, 0x00, 0x01, 0x05, 0xB8, 0x1B, 0x00,
     0x00, 0x00, 0x01, 0x8F, 0x5A, 0xE8, 0xB8, 0x20, 0x39, 0x01, 0x00, 0x3A,
     0x00, 0x01, 0x05, 0xB7, 0x3B, 0x00, 0x00, 0x00, 0x01, 0x8F, 0x5A, 0xE8,
@@ -29,7 +29,7 @@ static void test_default_callbacks(void** _CBOR_UNUSED(_state)) {
   }
 }
 
-unsigned char bytestring_data[] = {0x01, 0x02, 0x03};
+static unsigned char bytestring_data[] = {0x01, 0x02, 0x03};
 static void test_builder_byte_string_callback_append(
     void** _CBOR_UNUSED(_state)) {
   struct _cbor_stack stack = _cbor_stack_init();
@@ -170,7 +170,7 @@ static void test_builder_byte_string_callback_append_parent_alloc_failure(
   _cbor_stack_pop(&stack);
 }
 
-unsigned char string_data[] = {0x61, 0x62, 0x63};
+static unsigned char string_data[] = {0x61, 0x62, 0x63};
 static void test_builder_string_callback_append(void** _CBOR_UNUSED(_state)) {
   struct _cbor_stack stack = _cbor_stack_init();
   assert_non_null(_cbor_stack_push(&stack, cbor_new_indefinite_string(), 0));
@@ -361,7 +361,7 @@ static void test_append_map_failure(void** _CBOR_UNUSED(_state)) {
 }
 
 // Size 1 array start, but we get an indef break
-unsigned char invalid_indef_break_data[] = {0x81, 0xFF};
+static unsigned char invalid_indef_break_data[] = {0x81, 0xFF};
 static void test_invalid_indef_break(void** _CBOR_UNUSED(_state)) {
   struct cbor_load_result res;
   cbor_item_t* item = cbor_load(invalid_indef_break_data, 2, &res);
@@ -394,6 +394,10 @@ static void test_invalid_state_indef_break(void** _CBOR_UNUSED(_state)) {
   cbor_decref(&small_int);
   _cbor_stack_pop(&stack);
 }
+
+#if defined(BUILD_MONOLITHIC)
+#define main cbor_callbacks_test_main
+#endif
 
 int main(void) {
   const struct CMUnitTest tests[] = {

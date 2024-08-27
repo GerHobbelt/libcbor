@@ -22,7 +22,7 @@
 #include "cbor.h"
 #include "test_allocator.h"
 
-unsigned char buffer[512];
+static unsigned char buffer[512];
 
 static void test_serialize_uint8_embed(void **_CBOR_UNUSED(_state)) {
   cbor_item_t *item = cbor_new_int8();
@@ -649,6 +649,10 @@ static void test_auto_serialize_zero_len_indef_map(
   cbor_decref(&item);
   _cbor_free(output);
 }
+
+#if defined(BUILD_MONOLITHIC)
+#define main cbor_serialize_test_main
+#endif
 
 int main(void) {
   const struct CMUnitTest tests[] = {

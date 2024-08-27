@@ -17,12 +17,12 @@
 #include "cbor.h"
 #include "test_allocator.h"
 
-cbor_item_t *float_ctrl;
-struct cbor_load_result res;
+static cbor_item_t *float_ctrl = NULL;
+static struct cbor_load_result res;
 
 static const float eps = 0.00001f;
 
-unsigned char float2_data[] = {0xF9, 0x7B, 0xFF};
+static unsigned char float2_data[] = {0xF9, 0x7B, 0xFF};
 
 static void test_float2(void **_CBOR_UNUSED(_state)) {
   float_ctrl = cbor_load(float2_data, 3, &res);
@@ -35,7 +35,7 @@ static void test_float2(void **_CBOR_UNUSED(_state)) {
   assert_null(float_ctrl);
 }
 
-unsigned char float4_data[] = {0xFA, 0x47, 0xC3, 0x50, 0x00};
+static unsigned char float4_data[] = {0xFA, 0x47, 0xC3, 0x50, 0x00};
 
 static void test_float4(void **_CBOR_UNUSED(_state)) {
   float_ctrl = cbor_load(float4_data, 5, &res);
@@ -48,7 +48,7 @@ static void test_float4(void **_CBOR_UNUSED(_state)) {
   assert_null(float_ctrl);
 }
 
-unsigned char float8_data[] = {0xFB, 0x7E, 0x37, 0xE4, 0x3C,
+static unsigned char float8_data[] = {0xFB, 0x7E, 0x37, 0xE4, 0x3C,
                                0x88, 0x00, 0x75, 0x9C};
 
 static void test_float8(void **_CBOR_UNUSED(_state)) {
@@ -64,7 +64,7 @@ static void test_float8(void **_CBOR_UNUSED(_state)) {
   assert_null(float_ctrl);
 }
 
-unsigned char null_data[] = {0xF6};
+static unsigned char null_data[] = {0xF6};
 
 static void test_null(void **_CBOR_UNUSED(_state)) {
   float_ctrl = cbor_load(null_data, 1, &res);
@@ -74,7 +74,7 @@ static void test_null(void **_CBOR_UNUSED(_state)) {
   assert_null(float_ctrl);
 }
 
-unsigned char undef_data[] = {0xF7};
+static unsigned char undef_data[] = {0xF7};
 
 static void test_undef(void **_CBOR_UNUSED(_state)) {
   float_ctrl = cbor_load(undef_data, 1, &res);
@@ -84,7 +84,7 @@ static void test_undef(void **_CBOR_UNUSED(_state)) {
   assert_null(float_ctrl);
 }
 
-unsigned char bool_data[] = {0xF4, 0xF5};
+static unsigned char bool_data[] = {0xF4, 0xF5};
 
 static void test_bool(void **_CBOR_UNUSED(_state)) {
   _CBOR_TEST_DISABLE_ASSERT({
@@ -124,6 +124,10 @@ static void test_float_ctrl_creation(void **_CBOR_UNUSED(_state)) {
   WITH_FAILING_MALLOC({ assert_null(cbor_build_float8(3.14)); });
   WITH_FAILING_MALLOC({ assert_null(cbor_build_ctrl(0xAF)); });
 }
+
+#if defined(BUILD_MONOLITHIC)
+#define main cbor_float_ctrl_test_main
+#endif
 
 int main(void) {
   const struct CMUnitTest tests[] = {

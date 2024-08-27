@@ -11,7 +11,7 @@
 #include "assertions.h"
 #include "cbor.h"
 
-void assert_describe_result(cbor_item_t *item, char *expected_result) {
+static void assert_describe_result(cbor_item_t *item, char *expected_result) {
 #if CBOR_PRETTY_PRINTER
   // We know the expected size based on `expected_result`, but read everything
   // in order to get the full actual output in a useful error message.
@@ -184,6 +184,10 @@ static void test_floats(void **_CBOR_UNUSED(_state)) {
       "    [CBOR_TYPE_FLOAT_CTRL] Width: 4B, Value: 3.140000\n");
   cbor_decref(&item);
 }
+
+#if defined(BUILD_MONOLITHIC)
+#define main cbor_pretty_printer_test_main
+#endif
 
 int main(void) {
   const struct CMUnitTest tests[] = {

@@ -8,6 +8,10 @@
 #include <stdio.h>
 #include "cbor.h"
 
+#if defined(BUILD_MONOLITHIC)
+#define main cbor_create_items_example_main
+#endif
+
 int main(void) {
   /* Preallocate the map structure */
   cbor_item_t* root = cbor_new_definite_map(2);
@@ -31,4 +35,5 @@ int main(void) {
 
   fflush(stdout);
   cbor_decref(&root);
+  return 0;
 }

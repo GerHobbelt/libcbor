@@ -9,10 +9,10 @@
 #include "cbor.h"
 #include "test_allocator.h"
 
-cbor_item_t *arr;
-struct cbor_load_result res;
+static cbor_item_t *arr = NULL;
+static struct cbor_load_result res;
 
-unsigned char data1[] = {0x80, 0xFF};
+static unsigned char data1[] = {0x80, 0xFF};
 
 static void test_empty_array(void **_CBOR_UNUSED(_state)) {
   arr = cbor_load(data1, 2, &res);
@@ -25,7 +25,7 @@ static void test_empty_array(void **_CBOR_UNUSED(_state)) {
   assert_null(arr);
 }
 
-unsigned char data2[] = {0x81, 0x01, 0xFF};
+static unsigned char data2[] = {0x81, 0x01, 0xFF};
 
 static void test_simple_array(void **_CBOR_UNUSED(_state)) {
   arr = cbor_load(data2, 3, &res);
@@ -51,7 +51,7 @@ static void test_simple_array(void **_CBOR_UNUSED(_state)) {
   assert_null(intermediate);
 }
 
-unsigned char data3[] = {0x82, 0x01, 0x81, 0x01, 0xFF};
+static unsigned char data3[] = {0x82, 0x01, 0x81, 0x01, 0xFF};
 
 static void test_nested_arrays(void **_CBOR_UNUSED(_state)) {
   arr = cbor_load(data3, 5, &res);
@@ -72,7 +72,7 @@ static void test_nested_arrays(void **_CBOR_UNUSED(_state)) {
   assert_null(arr);
 }
 
-unsigned char test_indef_arrays_data[] = {0x9f, 0x01, 0x02, 0xFF};
+static unsigned char test_indef_arrays_data[] = {0x9f, 0x01, 0x02, 0xFF};
 
 static void test_indef_arrays(void **_CBOR_UNUSED(_state)) {
   arr = cbor_load(test_indef_arrays_data, 4, &res);
@@ -91,7 +91,7 @@ static void test_indef_arrays(void **_CBOR_UNUSED(_state)) {
   assert_null(arr);
 }
 
-unsigned char test_nested_indef_arrays_data[] = {0x9f, 0x01, 0x9f, 0x02,
+static unsigned char test_nested_indef_arrays_data[] = {0x9f, 0x01, 0x9f, 0x02,
                                                  0xFF, 0x03, 0xFF};
 
 static void test_nested_indef_arrays(void **_CBOR_UNUSED(_state)) {
@@ -203,6 +203,10 @@ static void test_indef_array_decode(void **_CBOR_UNUSED(_state)) {
       },
       4, MALLOC, MALLOC, MALLOC, REALLOC_FAIL);
 }
+
+#if defined(BUILD_MONOLITHIC)
+#define main cbor_array_test_main
+#endif
 
 int main(void) {
   const struct CMUnitTest tests[] = {

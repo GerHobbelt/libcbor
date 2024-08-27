@@ -9,7 +9,7 @@
 #include "assertions.h"
 #include "cbor.h"
 
-unsigned char buffer[512];
+static unsigned char buffer[512];
 
 static void test_bools(void **_CBOR_UNUSED(_state)) {
   assert_size_equal(1, cbor_encode_bool(false, buffer, 512));
@@ -200,6 +200,10 @@ static void test_double(void **_CBOR_UNUSED(_state)) {
       ((unsigned char[]){0xFB, 0xFF, 0xF0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}),
       9);
 }
+
+#if defined(BUILD_MONOLITHIC)
+#define main cbor_float_ctrl_encoders_test_main
+#endif
 
 int main(void) {
   const struct CMUnitTest tests[] = {

@@ -10,14 +10,14 @@
 
 #include "cbor.h"
 
-cbor_item_t *number;
-struct cbor_load_result res;
+static cbor_item_t *number = NULL;
+static struct cbor_load_result res;
 
-unsigned char data1[] = {0x02, 0xFF};
-unsigned char data2[] = {0x18, 0xFF, 0xFF};
-unsigned char data3[] = {0x19, 0x01, 0xf4, 0xFF};
-unsigned char data4[] = {0x1a, 0xa5, 0xf7, 0x02, 0xb3, 0xFF};
-unsigned char data5[] = {0x1b, 0xa5, 0xf7, 0x02, 0xb3,
+static unsigned char data1[] = {0x02, 0xFF};
+static unsigned char data2[] = {0x18, 0xFF, 0xFF};
+static unsigned char data3[] = {0x19, 0x01, 0xf4, 0xFF};
+static unsigned char data4[] = {0x1a, 0xa5, 0xf7, 0x02, 0xb3, 0xFF};
+static unsigned char data5[] = {0x1b, 0xa5, 0xf7, 0x02, 0xb3,
                          0xa5, 0xf7, 0x02, 0xb3, 0xFF};
 
 static void test_very_short_int(void **_CBOR_UNUSED(_state)) {
@@ -141,6 +141,10 @@ static void test_int_creation(void **_CBOR_UNUSED(_state)) {
   WITH_FAILING_MALLOC({ assert_null(cbor_build_uint32(0xFF)); });
   WITH_FAILING_MALLOC({ assert_null(cbor_build_uint64(0xFF)); });
 }
+
+#if defined(BUILD_MONOLITHIC)
+#define main cbor_uint_test_main
+#endif
 
 int main(void) {
   const struct CMUnitTest tests[] = {

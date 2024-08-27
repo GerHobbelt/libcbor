@@ -8,17 +8,17 @@
 #include <stdlib.h>
 #include "cbor.h"
 
-void usage(void) {
+static void usage(void) {
   printf("Usage: streaming_array <N>\n");
   printf("Prints out serialized array [0, ..., N-1]\n");
   exit(1);
 }
 
 #define BUFFER_SIZE 8
-unsigned char buffer[BUFFER_SIZE];
-FILE* out;
+static unsigned char buffer[BUFFER_SIZE];
+static FILE* out;
 
-void flush(size_t bytes) {
+static void flush(size_t bytes) {
   if (bytes == 0) exit(1);  // All items should be successfully encoded
   if (fwrite(buffer, sizeof(unsigned char), bytes, out) != bytes) exit(1);
   if (fflush(out)) exit(1);
@@ -28,11 +28,16 @@ void flush(size_t bytes) {
  * Example of using the streaming encoding API to create an array of integers
  * on the fly. Notice that a partial output is produced with every element.
  */
-int main(int argc, char* argv[]) {
+
+#if defined(BUILD_MONOLITHIC)
+#define main cbor_streaming_array_example_main
+#endif
+
+int main(int argc, const char** argv) {
   if (argc != 2) usage();
   long n = strtol(argv[1], NULL, 10);
   out = freopen(NULL, "wb", stdout);
-  if (!out) exit(1);
+  if (!out) return 1;
 
   // Start an indefinite-length array
   flush(cbor_encode_indef_array_start(buffer, BUFFER_SIZE));
@@ -43,5 +48,6 @@ int main(int argc, char* argv[]) {
   // Close the array
   flush(cbor_encode_break(buffer, BUFFER_SIZE));
 
-  if (fclose(out)) exit(1);
+  if (fclose(out)) return 1;
+  return 0;
 }

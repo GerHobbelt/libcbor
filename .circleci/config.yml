@@ -206,15 +206,21 @@ jobs:
           /c/Program\ Files/Cmake/bin/ctest.exe --test-dir libcbor_build --output-on-failure
 
   build-and-test-mips:
-    build:
-      docker:
-        - image: dockcross/linux-mips
+    docker:
+      - image: dockcross/linux-mips
     steps:
+      - checkout
       - attach_workspace:
           at: /home/circleci/project
-      - run:
-        name: LS
-        command: ls -al
+      # Build cmocka from source
+      - run: git clone https://git.cryptomilk.org/projects/cmocka.git ~/cmocka
+      - run: >
+          cd $(mktemp -d /tmp/build.XXXX) &&
+          cmake ~/cmocka &&
+          make &&
+          sudo make install
+      - build
+      - test
 
 workflows:
   build-and-test:
